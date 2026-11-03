@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 scores.db
 *.db
+*.log
 .venv/
 venv/
