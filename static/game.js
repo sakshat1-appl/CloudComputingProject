@@ -23,7 +23,7 @@ function flap() {
 function update() {
   if (!running || dead) return;
   frame++;
-  bird.vy += 0.35;
+  bird.vy += 0.28;
   bird.y += bird.vy;
 
   if (frame % 90 === 0) {
