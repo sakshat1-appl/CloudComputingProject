@@ -3,6 +3,15 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const W = canvas.width, H = canvas.height;
 
+// Bird sprite assets (2-frame flap) - falls back to circle if not loaded yet
+const birdImg = new Image();
+const birdImgFlap = new Image();
+let birdReady = 0;
+birdImg.onload = () => birdReady++;
+birdImgFlap.onload = () => birdReady++;
+birdImg.src = "/static/bird.svg";
+birdImgFlap.src = "/static/bird-flap.svg";
+
 let bird, pipes, score, running, dead, frame;
 
 function reset() {
@@ -47,12 +56,22 @@ function update() {
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  // bird
-  ctx.fillStyle = "#ffeb3b";
-  ctx.beginPath();
-  ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "#333"; ctx.stroke();
+  // bird (sprite asset, tilts with velocity + flaps wings)
+  if (birdReady >= 2) {
+    const img = (running && !dead && Math.floor(frame / 8) % 2 === 0) ? birdImgFlap : birdImg;
+    const tilt = Math.max(-0.4, Math.min(0.6, bird.vy * 0.06));
+    ctx.save();
+    ctx.translate(bird.x, bird.y);
+    ctx.rotate(tilt);
+    ctx.drawImage(img, -20, -15, 40, 30);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = "#ffeb3b";
+    ctx.beginPath();
+    ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#333"; ctx.stroke();
+  }
   // pipes
   ctx.fillStyle = "#4caf50";
   for (const p of pipes) {
